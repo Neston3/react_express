@@ -15,3 +15,30 @@ exports.register_user = function (request, res) {
         }
     });
 };
+
+/*login user*/
+exports.login_user = function (request, res) {
+
+    let sql = 'SELECT * FROM users where email =  ?';
+    connection.query(sql, [request.body.email], function (err, result) {
+        if (err) {
+            res.send('failed');
+            return false;
+        }else{
+            if (result.length !== 0){
+
+                if(bcrypt.compareSync(request.body.password, result[0].password)) {
+                     /*password match*/
+                    res.send('success_login');
+                } else {
+                    /*password no match*/
+                    res.send('failed_login');
+                }
+
+            }else{
+                res.send('user_not_found')
+            }
+            return false;
+        }
+    });
+};
